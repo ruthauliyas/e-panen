@@ -24,8 +24,11 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MandorDashboard()));
+            Navigator.push(
+              context,MaterialPageRoute(
+                builder: (context) => MandorScreen(mandorName: "Pak Budi"),
+              ),
+            );
           },
           child: Text('Login sebagai Mandor'),
         ),

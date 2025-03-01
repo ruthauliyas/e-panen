@@ -3,12 +3,16 @@ import '../../models/pemanen.dart';
 import '../../utils/storage_service.dart';
 import 'detail_pemanen_screen.dart';
 
-class MandorDashboard extends StatefulWidget {
+class MandorScreen extends StatefulWidget {
+  final String mandorName;
+
+  MandorScreen({required this.mandorName});
+
   @override
-  State<MandorDashboard> createState() => _MandorDashboardState();
+  State<MandorScreen> createState() => _MandorScreenState();
 }
 
-class _MandorDashboardState extends State<MandorDashboard> {
+class _MandorScreenState extends State<MandorScreen> {
   List<Pemanen> pemanenList = [];
 
   @override
@@ -28,8 +32,8 @@ class _MandorDashboardState extends State<MandorDashboard> {
     int perPemanen = hadir.isEmpty ? 0 : (totalBaris ~/ hadir.length);
 
     for (int i = 0; i < hadir.length; i++) {
-      hadir[i].startBaris = i * perPemanen + 1;
-      hadir[i].endBaris = (i == hadir.length - 1)
+      hadir[i].barisAwal = i * perPemanen + 1;
+      hadir[i].barisAkhir = (i == hadir.length - 1)
           ? totalBaris
           : (i + 1) * perPemanen;
     }
@@ -63,19 +67,38 @@ class _MandorDashboardState extends State<MandorDashboard> {
     setState(() {});
   }
 
+  void _logout() {
+    Navigator.of(context).pop(); // Kembali ke login screen
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard Mandor')),
+      appBar: AppBar(
+        title: Text('Dashboard Mandor'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
+      ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Selamat Datang, ${widget.mandorName}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: pemanenList.length,
               itemBuilder: (context, index) {
                 Pemanen p = pemanenList[index];
                 return ListTile(
-                  title: Text("${p.nama} (${p.startBaris ?? '-'} - ${p.endBaris ?? '-'})"),
+                  title: Text("${p.nama} (${p.barisAwal ?? '-'} - ${p.barisAkhir ?? '-'})"),
                   subtitle: Text(p.hadir ? "Hadir" : "Absen"),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -96,7 +119,9 @@ class _MandorDashboardState extends State<MandorDashboard> {
                   ),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DetailPemanenScreen(pemanen: p)),
+                    MaterialPageRoute(
+                      builder: (context) => DetailPemanenScreen(pemanen: p),
+                    ),
                   ),
                 );
               },
@@ -107,7 +132,7 @@ class _MandorDashboardState extends State<MandorDashboard> {
             child: Text("Hitung Alokasi"),
           ),
           ElevatedButton(
-            onPressed: () => _showAddDialog(),
+            onPressed: _showAddDialog,
             child: Text("Tambah Pemanen"),
           ),
         ],
@@ -135,8 +160,8 @@ class _MandorDashboardState extends State<MandorDashboard> {
               onPressed: () {
                 if (nama.isNotEmpty) {
                   _addPemanen(nama);
+                  Navigator.pop(context);
                 }
-                Navigator.pop(context);
               },
               child: Text('Tambah'),
             ),
@@ -169,8 +194,8 @@ class _MandorDashboardState extends State<MandorDashboard> {
               onPressed: () {
                 if (nama.isNotEmpty) {
                   _editPemanen(index, nama);
+                  Navigator.pop(context);
                 }
-                Navigator.pop(context);
               },
               child: Text('Simpan'),
             ),

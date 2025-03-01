@@ -1,17 +1,21 @@
 class Pemanen {
   String nama;
-  int barisAwal;
-  int barisAkhir;
+  int? barisAwal;
+  int? barisAkhir;
   bool hadir;
-  String? pengganti; // null kalau dia hadir
+  String? pengganti;
+  List<String> statusBaris = [];  // Tambahan
+  int? startBaris;                 // Tambahan
 
   Pemanen({
     required this.nama,
-    required this.barisAwal,
-    required this.barisAkhir,
+    this.barisAwal,
+    this.barisAkhir,
     this.hadir = true,
     this.pengganti,
-  });
+    List<String>? statusBaris,
+    this.startBaris,
+  }) : statusBaris = statusBaris ?? [];
 
   Map<String, dynamic> toJson() => {
     'nama': nama,
@@ -19,6 +23,8 @@ class Pemanen {
     'barisAkhir': barisAkhir,
     'hadir': hadir,
     'pengganti': pengganti,
+    'statusBaris': statusBaris,
+    'startBaris': startBaris,
   };
 
   static Pemanen fromJson(Map<String, dynamic> json) => Pemanen(
@@ -27,5 +33,7 @@ class Pemanen {
     barisAkhir: json['barisAkhir'],
     hadir: json['hadir'],
     pengganti: json['pengganti'],
+    statusBaris: List<String>.from(json['statusBaris'] ?? []),
+    startBaris: json['startBaris'],
   );
 }
